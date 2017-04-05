@@ -187,8 +187,12 @@
                         var state = arr_from_json[i].state;
                         var postcode = arr_from_json[i].postcode;
 
+                        if(str_num) {
+                            addListItemWithAddr(title, firstname, lastname, phone, str_num, str_name, str_type, suburb, state, postcode);
+                        } else {
+                            addListItemWithoutAddr(title, firstname, lastname, phone, suburb, state, postcode);
+                        }
 
-                        addListItem(title, firstname, lastname, phone, str_num, str_name, str_type, suburb, state, postcode);
                     }
                 } else {
                     var displayResult = document.getElementById("resultEmpty");
@@ -219,15 +223,18 @@
         getLatitudeLongitude(displayLocation, address);
     }
 
-    function addListItem(title, fname, lname, phone, str_num, str_name, str_type, suburb, state, postcode) {
+    function addListItemWithAddr(title, fname, lname, phone, str_num, str_name, str_type, suburb, state, postcode) {
         $("#resultList").append('<li><div class="info"><h2 class="title">' + title + ' ' + fname + ' ' + lname +
-            '</h2><p class="desc">' + phone + '</p><a id="href_addr" href="#" onclick="locateMap();">' + str_num + ' ' + str_name +
-            ' ' + str_type + ', ' + suburb + ' ' + state + ', ' + postcode + '</a></div></li>');
+            '</h2><p class="desc">Phone: ' + phone + '</p><p class="desc">Address: <a id="href_addr" href="#" onclick="locateMap();">' + str_num + ' ' + str_name +
+            ' ' + str_type + ', ' + suburb + ' ' + state + ', ' + postcode + '</a></p></div></li>');
+    }
+
+    function addListItemWithoutAddr(title, fname, lname, phone, suburb, state, postcode) {
+        $("#resultList").append('<li><div class="info"><h2 class="title">' + title + ' ' + fname + ' ' + lname +
+            '</h2><p class="desc">Phone: ' + phone + '</p><p class="desc">'  + suburb + ' ' + state + ', ' + postcode + '</p></div></li>');
     }
 
     function getLatitudeLongitude(callback, address) {
-        // If adress is not supplied, use default value 'Ferrol, Galicia, Spain'
-        address = address || 'Ferrol, Galicia, Spain';
         // Initialize the Geocoder
         geocoder = new google.maps.Geocoder();
         if (geocoder) {
