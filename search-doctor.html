@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<!--
+	Guardians4
+-->
+<html>
+<head>
+    <title>Professional Help</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/list.css">
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+    <link rel="stylesheet" href="assets/css/easy-autocomplete.min.css" />
+</head>
+<body class="no-sidebar">
+<div id="page-wrapper">
+
+    <!-- Header -->
+    <div id="header-wrapper">
+        <div id="header" class="container">
+
+            <!-- Logo -->
+            <h1 id="logo"><a href="index.html">Guardians 4</a></h1>
+            <p>Be Alert, Be Safe</p>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li><a class="icon fa-home" href="index.html"><span>Home</span></a></li>
+                    <li><a class="icon fa-question" href="did_you_know.html"><span>Did you know?</span></a></li>
+                    <li><a class="icon fa-search" href="search-doctor.html"><span>Search For Professional Help</span></a> </li>
+                    <li><a class="icon fa-hospital-o" href="emergency_contacts.html"><span>Emergency Contacts</span></a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div id="main-wrapper">
+        <div id="main" class="container">
+            <div id="content">
+                <!-- Post -->
+                <article class="box post">
+                    <header>
+                        <h2>Search the professional help who speaks <strong>your language</strong>!</h2>
+                    </header>
+
+                    <div class="row">
+                        <div class="6u 12u(mobile)">
+                            <section>
+                                <form action="" id="searchForm">
+                                    <div class="row 50%">
+                                        <div class="12u 12u(mobile)">
+                                            <input id="ipt_postcode" name="postcode" placeholder="Postcode" type="text" required></input>
+                                        </div>
+                                    </div>
+                                    <div class="row 50%">
+                                        <div class="6u 12u(mobile)">
+                                            <br/>
+                                            <input id="ipt_lang" name="lang" placeholder="Language" type="text" required></input>
+                                        </div>
+
+                                        <div class="6u 12u(mobile)">
+                                            Gender:
+                                            <select id="slt_gender" name="gender">
+                                                <option>M</option>
+                                                <option>F</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row 50%">
+                                        <div class="12u">
+                                            <input id="btn_search" type="submit"></input>
+                                        </div>
+                                    </div>
+                                </form>
+                            </section>
+                        </div>
+
+                        <div class="6u 12u(mobile)">
+                            <section>
+                                <div class="row 50%">
+                                    <div class="12u">
+                                        <div id="map" style="height: 200px"></div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <div id="result" class="container">
+            <div class="row">
+                <div class="12u 12u(mobile)">
+                    <h3 id="resultHead" style="display: none;">Result List:</h3>
+                    <ul id="resultList" class="event-list">
+
+                    </ul>
+                    
+                    <h2 id="resultEmpty" style="display:none;"></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <div id="footer-wrapper">
+        <div id="copyright" class="container">
+            <ul class="links">
+                <li>&copy; Guardians 4. All rights reserved, 2017.</li>
+                <li>Design: <a href="http://www.guardians4.tk">Guardians4</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.dropotron.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/skel-viewport.min.js"></script>
+<script src="assets/js/util.js"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="assets/js/main.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?callback=map"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYQf-UTzwoj79TdoFPe4CAFBZAMlUWD6c&callback=initMap"></script>
+<script src="assets/js/jquery.easy-autocomplete.min.js"></script>
+<script>
+    function initMap() {
+        var uluru = {lat: -37.876339, lng: 145.044299};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+    }
+
+    $("#searchForm").submit(function () {
+        event.preventDefault();
+        searchDoctor();
+        return false;
+
+    });
+
+    function searchDoctor() {
+        var genderTemp = document.getElementById("slt_gender").value;
+        var langTemp = document.getElementById("ipt_lang").value;
+        var postcodeTemp = document.getElementById("ipt_postcode").value;
+
+        $.ajax({
+            type:"POST",
+            url:"/search.php",
+            data:{postcodeAjax:postcodeTemp, langAjax:langTemp, genderAjax:genderTemp},
+            success:function (data) {
+                $("#resultList").empty();
+                document.getElementById("resultEmpty").style.display = "none";
+                document.getElementById("resultHead").style.display = "none";
+
+                if (data !== "empty") {
+                    var arr_from_json = JSON.parse(data);
+                    document.getElementById("resultHead").style.display = "block";
+
+                    for (var i = 0; i < arr_from_json.length; i++) {
+                        var title = arr_from_json[i].title;
+                        var firstname = arr_from_json[i].firstName;
+                        var lastname = arr_from_json[i].lastName;
+                        var gender = arr_from_json[i].gender;
+                        var phone = arr_from_json[i].phone;
+                        var str_num = arr_from_json[i].str_number;
+                        var str_name = arr_from_json[i].str_name;
+                        var str_type = arr_from_json[i].str_type;
+                        var suburb = arr_from_json[i].suburb;
+                        var state = arr_from_json[i].state;
+                        var postcode = arr_from_json[i].postcode;
+
+
+                        addListItem(title, firstname, lastname, phone, str_num, str_name, str_type, suburb, state, postcode);
+                    }
+                } else {
+                    var displayResult = document.getElementById("resultEmpty");
+                    displayResult.innerHTML = "No result!";
+                    displayResult.style.display = "block";
+                }
+            }
+        });
+    }
+
+    function displayLocation(result) {
+        latTemp = result.geometry.location.lat();
+        lngTemp = result.geometry.location.lng();
+
+        var uluru = {lat: latTemp, lng: lngTemp};
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+    }
+
+    function locateMap() {
+        var address = document.getElementById('href_addr').innerHTML;
+        getLatitudeLongitude(displayLocation, address);
+    }
+
+    function addListItem(title, fname, lname, phone, str_num, str_name, str_type, suburb, state, postcode) {
+        $("#resultList").append('<li><div class="info"><h2 class="title">' + title + ' ' + fname + ' ' + lname +
+            '</h2><p class="desc">' + phone + '</p><a id="href_addr" href="#" onclick="locateMap();">' + str_num + ' ' + str_name +
+            ' ' + str_type + ', ' + suburb + ' ' + state + ', ' + postcode + '</a></div></li>');
+    }
+
+    function getLatitudeLongitude(callback, address) {
+        // If adress is not supplied, use default value 'Ferrol, Galicia, Spain'
+        address = address || 'Ferrol, Galicia, Spain';
+        // Initialize the Geocoder
+        geocoder = new google.maps.Geocoder();
+        if (geocoder) {
+            geocoder.geocode({
+                'address': address
+            }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    callback(results[0]);
+                }
+            });
+        }
+    }
+
+</script>
+<script>
+    var optionsPost = {
+        url: "resources/postcode.json",
+
+        getValue: "postcode",
+
+        template: {
+            type: "description",
+            fields: {
+                description: "suburb"
+            }
+        },
+
+        list: {
+            maxNumberOfElements: 10,
+            match: {
+                enabled: true
+            }
+        }
+    };
+
+    $("#ipt_postcode").easyAutocomplete(optionsPost);
+</script>
+<script>
+    var optionsLang = {
+        url: "resources/lang.json",
+
+        getValue: "lang",
+
+        list: {
+            maxNumberOfElements: 10,
+            match: {
+                enabled: true
+            }
+        }
+    };
+
+    $("#ipt_lang").easyAutocomplete(optionsLang);
+</script>
+</body>
+</html>
